@@ -23,20 +23,16 @@ OPTIONS = {
     # CRITICAL: argv_emulation must be False for rumps.
     # True causes the app to silently hang on launch.
     "argv_emulation": False,
-
     "packages": [
         "rumps",
     ],
-
     "includes": [
         "src.calendar_client",
         "src.scheduler",
         "EventKit",
         "Foundation",
     ],
-
     "frameworks": [],
-
     "plist": {
         # No dock icon — this is a menubar-only app.
         "LSUIElement": True,
@@ -52,7 +48,6 @@ OPTIONS = {
             "before upcoming meetings."
         ),
     },
-
     "iconfile": None,  # Set to "assets/icon.icns" if you have one
 }
 

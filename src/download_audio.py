@@ -43,8 +43,7 @@ def main() -> None:
         )
     except (FileNotFoundError, subprocess.CalledProcessError):
         print(
-            "ERROR: ffmpeg not found. Install it first:\n"
-            "    brew install ffmpeg",
+            "ERROR: ffmpeg not found. Install it first:\n" "    brew install ffmpeg",
             file=sys.stderr,
         )
         sys.exit(1)
@@ -69,11 +68,15 @@ def main() -> None:
     cmd = [
         "yt-dlp",
         "--extract-audio",
-        "--audio-format", "mp3",
-        "--audio-quality", "0",          # best quality
-        "--output", output_template,
+        "--audio-format",
+        "mp3",
+        "--audio-quality",
+        "0",  # best quality
+        "--output",
+        output_template,
         "--no-playlist",
-        "--js-runtimes", "node",         # use node for YouTube JS extraction
+        "--js-runtimes",
+        "node",  # use node for YouTube JS extraction
         BBC_YOUTUBE_URL,
     ]
 
@@ -81,7 +84,9 @@ def main() -> None:
     result = subprocess.run(cmd)
 
     if result.returncode != 0:
-        print("ERROR: yt-dlp failed. Check the URL above and try again.", file=sys.stderr)
+        print(
+            "ERROR: yt-dlp failed. Check the URL above and try again.", file=sys.stderr
+        )
         sys.exit(1)
 
     if not os.path.exists(OUTPUT_PATH):

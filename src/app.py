@@ -33,6 +33,7 @@ from scheduler import Scheduler
 # Paths
 # ---------------------------------------------------------------------------
 
+
 def _resource_path(filename: str) -> str:
     # In a bundled .app, RESOURCEPATH points to the bundle's Resources dir.
     # In dev, app.py lives in src/ and assets live one level up at the project root.
@@ -44,21 +45,20 @@ def _resource_path(filename: str) -> str:
 
 AUDIO_PATH = _resource_path("assets/bbc_news.mp3")
 
-LAUNCH_AGENT_PLIST = (
-    Path.home() / "Library" / "LaunchAgents" / "com.bbc-alert.plist"
-)
+LAUNCH_AGENT_PLIST = Path.home() / "Library" / "LaunchAgents" / "com.bbc-alert.plist"
 APP_BUNDLE_PATH = "/Applications/BBC Alert.app/Contents/MacOS/BBC Alert"
 
 # ---------------------------------------------------------------------------
 # Countdown constants
 # ---------------------------------------------------------------------------
 
-_COUNTDOWN_SECONDS = 15     # when to start showing the countdown
-_LIVE_DISPLAY_SECONDS = 4   # how long to show "is live!" after meeting starts
+_COUNTDOWN_SECONDS = 15  # when to start showing the countdown
+_LIVE_DISPLAY_SECONDS = 4  # how long to show "is live!" after meeting starts
 
 # ---------------------------------------------------------------------------
 # LaunchAgent helpers
 # ---------------------------------------------------------------------------
+
 
 def _is_launch_at_login_enabled() -> bool:
     return LAUNCH_AGENT_PLIST.exists()
@@ -79,13 +79,16 @@ def _write_launch_agent_plist() -> None:
 
 def _remove_launch_agent_plist() -> None:
     if LAUNCH_AGENT_PLIST.exists():
-        subprocess.run(["launchctl", "unload", str(LAUNCH_AGENT_PLIST)], capture_output=True)
+        subprocess.run(
+            ["launchctl", "unload", str(LAUNCH_AGENT_PLIST)], capture_output=True
+        )
         LAUNCH_AGENT_PLIST.unlink()
 
 
 # ---------------------------------------------------------------------------
 # App
 # ---------------------------------------------------------------------------
+
 
 class BBCAlertApp(rumps.App):
     def __init__(self) -> None:
@@ -117,7 +120,11 @@ class BBCAlertApp(rumps.App):
         self._test_item = rumps.MenuItem("Test alert", callback=self._on_test_alert)
         self._silence_item = rumps.MenuItem("Silence", callback=self._on_silence)
         self._login_item = rumps.MenuItem(
-            "✅ Launch at login" if _is_launch_at_login_enabled() else "Launch at login",
+            (
+                "✅ Launch at login"
+                if _is_launch_at_login_enabled()
+                else "Launch at login"
+            ),
             callback=self._on_toggle_launch_at_login,
         )
         self._auth_item = self._make_auth_item()
@@ -238,14 +245,14 @@ class BBCAlertApp(rumps.App):
                 self._flash_tick = 0
                 self._live_event = next_event
                 self._live_shown_at = now
-                self._set_menubar_title(f'<{name}> is live!')
+                self._set_menubar_title(f"<{name}> is live!")
             return
 
         # Active countdown: 0 < delta <= 15
         self._counting_down = True
         self._flash_tick += 1
         seconds = int(delta) + 1  # round up so we show "1s" not "0s"
-        text = f'<{name}> in {seconds}s'
+        text = f"<{name}> in {seconds}s"
 
         if seconds <= 5:
             # Flash background twice per second: toggle every 0.25s tick
@@ -304,7 +311,8 @@ class BBCAlertApp(rumps.App):
         self._test_event = {
             "id": "__test__",
             "summary": "Test Meeting",
-            "start_dt": datetime.now(timezone.utc) + timedelta(seconds=_COUNTDOWN_SECONDS),
+            "start_dt": datetime.now(timezone.utc)
+            + timedelta(seconds=_COUNTDOWN_SECONDS),
         }
 
     def _on_silence(self, _sender: rumps.MenuItem) -> None:

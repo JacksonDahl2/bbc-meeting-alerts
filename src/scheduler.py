@@ -20,9 +20,9 @@ from calendar_client import CalendarClient
 PREFS_DIR = Path.home() / ".bbc-alert"
 ALERTED_PATH = PREFS_DIR / "alerted.json"
 
-ALERT_SECONDS = 15            # play jingle this many seconds before meeting
-POLL_INTERVAL = 60            # seconds between calendar polls
-ALERTED_TTL_HOURS = 24        # purge alerted entries after this many hours
+ALERT_SECONDS = 15  # play jingle this many seconds before meeting
+POLL_INTERVAL = 60  # seconds between calendar polls
+ALERTED_TTL_HOURS = 24  # purge alerted entries after this many hours
 
 
 def _load_json(path: Path, default: Any) -> Any:
@@ -145,9 +145,7 @@ class Scheduler(threading.Thread):
         data = self._load_alerted()
         cutoff = datetime.now(timezone.utc) - timedelta(hours=ALERTED_TTL_HOURS)
         cleaned = {
-            eid: ts
-            for eid, ts in data.items()
-            if datetime.fromisoformat(ts) > cutoff
+            eid: ts for eid, ts in data.items() if datetime.fromisoformat(ts) > cutoff
         }
         if len(cleaned) != len(data):
             _save_json(ALERTED_PATH, cleaned)
