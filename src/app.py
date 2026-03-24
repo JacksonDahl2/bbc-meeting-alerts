@@ -23,7 +23,7 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 GITHUB_REPO = "jacksonDahl2/bbc-alert"
 
 import rumps
@@ -180,13 +180,16 @@ class BBCAlertApp(rumps.App):
 
         def _check() -> None:
             import time
+
             time.sleep(10)
             try:
                 url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
                 req = urllib.request.Request(
                     url,
-                    headers={"Accept": "application/vnd.github+json",
-                             "User-Agent": f"bbc-alert/{__version__}"},
+                    headers={
+                        "Accept": "application/vnd.github+json",
+                        "User-Agent": f"bbc-alert/{__version__}",
+                    },
                 )
                 with urllib.request.urlopen(req, timeout=10) as resp:
                     data = json.loads(resp.read().decode())

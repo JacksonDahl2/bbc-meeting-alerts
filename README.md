@@ -150,6 +150,35 @@ The YouTube URL may be stale. Update `BBC_YOUTUBE_URL` in `src/download_audio.py
 
 ---
 
+## Releases
+
+To publish a new release:
+
+1. Bump `__version__` in `src/app.py`:
+   ```python
+   __version__ = "1.2.0"
+   ```
+
+2. Commit and tag:
+   ```bash
+   git add src/app.py
+   git commit -m "chore: bump version to 1.2.0"
+   git tag v1.2.0
+   git push origin main v1.2.0
+   ```
+
+Pushing the tag triggers the GitHub Actions release workflow, which:
+- Builds a standalone `.app` bundle with py2app
+- Packages it into a `.dmg`
+- Creates a GitHub Release with auto-generated notes and the DMG attached
+
+You can also build and package locally with:
+```bash
+make release
+```
+
+---
+
 ## Stack
 
 - [rumps](https://github.com/jaredks/rumps) — macOS menubar apps in Python
