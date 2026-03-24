@@ -22,6 +22,9 @@ jobs:
       - name: Install Python dependencies
         run: uv sync
 
+      - name: Download BBC News jingle
+        run: uv run python src/download_audio.py
+
       - name: Build app bundle
         run: uv run python setup.py py2app
 
