@@ -23,7 +23,7 @@ import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 GITHUB_REPO = "jacksonDahl2/bbc-alert"
 
 import rumps
