@@ -1,0 +1,22 @@
+[project]
+name = "bbc-alert"
+version = "0.1.0"
+description = "macOS menubar app that plays the BBC News jingle before Google Calendar meetings"
+requires-python = ">=3.11"
+dependencies = [
+    "rumps>=0.4.0",
+    "pyobjc-framework-EventKit>=10.0",
+    "pyobjc-framework-Quartz>=10.0",
+    "yt-dlp>=2024.0.0",
+    "py2app>=0.28.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+
+[dependency-groups]
+dev = []

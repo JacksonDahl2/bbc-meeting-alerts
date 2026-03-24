@@ -1,0 +1,27 @@
+# Audio file — populated by download_audio.py
+assets/bbc_news.mp3
+
+# Token storage
+~/.bbc-alert/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+
+# py2app
+build/
+dist/
+
+# macOS
+.DS_Store
+*.swp
