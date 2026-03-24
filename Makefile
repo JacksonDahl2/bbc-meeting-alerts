@@ -6,7 +6,7 @@ run:
 	uv run python src/app.py
 
 build:
-	uv run python setup.py py2app
+	.venv/bin/python setup.py py2app
 	@echo "Built dist/BBC Alert.app"
 
 dmg: build

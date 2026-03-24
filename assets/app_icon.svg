@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Background: BBC red rounded square -->
+  <rect width="1024" height="1024" rx="220" ry="220" fill="#BB1919"/>
+
+  <!-- Outer broadcast arcs - left -->
+  <path d="M 310 512 A 202 202 0 0 1 512 310" fill="none" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <path d="M 190 512 A 322 322 0 0 1 512 190" fill="none" stroke="white" stroke-width="52" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- Outer broadcast arcs - right -->
+  <path d="M 714 512 A 202 202 0 0 0 512 310" fill="none" stroke="white" stroke-width="52" stroke-linecap="round"/>
+  <path d="M 834 512 A 322 322 0 0 0 512 190" fill="none" stroke="white" stroke-width="52" stroke-linecap="round" opacity="0.55"/>
+
+  <!-- Clock face -->
+  <circle cx="512" cy="512" r="160" fill="#BB1919" stroke="white" stroke-width="48"/>
+
+  <!-- Hour hand: pointing to ~11 (upper-left) -->
+  <line x1="512" y1="512" x2="427" y2="400" stroke="white" stroke-width="44" stroke-linecap="round"/>
+
+  <!-- Minute hand: pointing straight up to 12 -->
+  <line x1="512" y1="512" x2="512" y2="368" stroke="white" stroke-width="32" stroke-linecap="round"/>
+
+  <!-- Center dot -->
+  <circle cx="512" cy="512" r="26" fill="white"/>
+</svg>

@@ -23,7 +23,7 @@ jobs:
         run: uv sync
 
       - name: Build app bundle
-        run: uv run python setup.py py2app
+        run: .venv/bin/python setup.py py2app
 
       - name: Extract version from tag
         id: version

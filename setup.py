@@ -14,7 +14,22 @@ Move it to /Applications/ for launch-at-login to work.
 import os
 from setuptools import setup
 
-data_files = []
+# py2app 0.28 rejects distributions that have install_requires set (it
+# manages nothing — uv handles all deps). Patch the check away at import time.
+import py2app.build_app as _ba
+
+_orig_finalize = _ba.py2app.finalize_options
+
+
+def _finalize(self):
+    if self.distribution:
+        self.distribution.install_requires = []
+    _orig_finalize(self)
+
+
+_ba.py2app.finalize_options = _finalize
+
+data_files = [("assets", ["assets/icon.svg"])]
 
 if os.path.exists("assets/bbc_news.mp3"):
     data_files.append(("assets", ["assets/bbc_news.mp3"]))
@@ -48,7 +63,7 @@ OPTIONS = {
             "before upcoming meetings."
         ),
     },
-    "iconfile": None,  # Set to "assets/icon.icns" if you have one
+    "iconfile": "assets/icon.icns",
 }
 
 setup(
@@ -56,5 +71,4 @@ setup(
     app=["src/app.py"],
     data_files=data_files,
     options={"py2app": OPTIONS},
-    setup_requires=["py2app"],
 )
