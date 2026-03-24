@@ -1,6 +1,3 @@
-# Audio file — populated by download_audio.py
-assets/bbc_news.mp3
-
 # Token storage
 ~/.bbc-alert/
 
