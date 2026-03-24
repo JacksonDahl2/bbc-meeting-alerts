@@ -14,12 +14,17 @@ Build as .app bundle:
 
 from __future__ import annotations
 
+import json
 import os
 import plistlib
 import subprocess
 import threading
+import urllib.request
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+__version__ = "1.0.0"
+GITHUB_REPO = "jacksonDahl2/bbc-alert"
 
 import rumps
 from Quartz import CGColorCreateSRGB
@@ -115,6 +120,10 @@ class BBCAlertApp(rumps.App):
         self._live_shown_at: datetime | None = None
         self._test_event: dict | None = None
 
+        # Update state
+        self._update_available: tuple[str, str] | None = None  # (tag, html_url)
+        self._update_item: rumps.MenuItem | None = None
+
         # Menu items
         self._meeting_items: list[rumps.MenuItem] = []
         self._test_item = rumps.MenuItem("Test alert", callback=self._on_test_alert)
@@ -132,6 +141,7 @@ class BBCAlertApp(rumps.App):
 
         self._rebuild_menu()
         self._scheduler.start()
+        self._start_update_check()
 
     # ------------------------------------------------------------------
     # Menu construction
@@ -154,9 +164,44 @@ class BBCAlertApp(rumps.App):
         items.append(self._login_item)
         items.append(rumps.separator)
         items.append(self._auth_item)
+        if self._update_item is not None:
+            items.append(self._update_item)
         items.append(self._quit_item)
         self.menu.clear()
         self.menu = items
+
+    # ------------------------------------------------------------------
+    # Update checker
+    # ------------------------------------------------------------------
+
+    def _start_update_check(self) -> None:
+        """Spawn a daemon thread that checks for a newer GitHub release after a
+        10-second delay so the app launches without any network latency."""
+
+        def _check() -> None:
+            import time
+            time.sleep(10)
+            try:
+                url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
+                req = urllib.request.Request(
+                    url,
+                    headers={"Accept": "application/vnd.github+json",
+                             "User-Agent": f"bbc-alert/{__version__}"},
+                )
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    data = json.loads(resp.read().decode())
+                tag: str = data.get("tag_name", "")
+                html_url: str = data.get("html_url", "")
+                if not tag:
+                    return
+                remote_ver = tuple(int(x) for x in tag.lstrip("v").split("."))
+                local_ver = tuple(int(x) for x in __version__.split("."))
+                if remote_ver > local_ver:
+                    self._update_available = (tag, html_url)
+            except Exception:
+                pass  # silently ignore network / parse errors
+
+        threading.Thread(target=_check, daemon=True).start()
 
     # ------------------------------------------------------------------
     # Icon + menubar title helpers
@@ -186,6 +231,24 @@ class BBCAlertApp(rumps.App):
     def _refresh_timer(self, _sender: rumps.Timer) -> None:
         self._refresh_meetings()
         self._refresh_auth_item()
+        self._check_update_flag()
+
+    def _check_update_flag(self) -> None:
+        """If an update was found by the background thread, inject the menu item."""
+        if self._update_available is None:
+            return
+        if self._update_item is not None:
+            return  # already showing
+        tag, url = self._update_available
+
+        def _open_release(_sender: rumps.MenuItem) -> None:
+            subprocess.run(["open", url])
+
+        self._update_item = rumps.MenuItem(
+            f"⬆ Update available: {tag}",
+            callback=_open_release,
+        )
+        self._rebuild_menu()
 
     @rumps.timer(5)
     def _auth_poll_timer(self, _sender: rumps.Timer) -> None:
