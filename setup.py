@@ -29,8 +29,8 @@ OPTIONS = {
     ],
 
     "includes": [
-        "calendar_client",
-        "scheduler",
+        "src.calendar_client",
+        "src.scheduler",
         "EventKit",
         "Foundation",
     ],
@@ -58,7 +58,7 @@ OPTIONS = {
 
 setup(
     name="BBC Alert",
-    app=["app.py"],
+    app=["src/app.py"],
     data_files=data_files,
     options={"py2app": OPTIONS},
     setup_requires=["py2app"],

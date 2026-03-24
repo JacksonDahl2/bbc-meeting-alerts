@@ -7,7 +7,7 @@ Prerequisites:
     uv add yt-dlp              # or pip install yt-dlp
 
 Usage:
-    uv run python download_audio.py
+    uv run python src/download_audio.py
 
 The file is saved to assets/bbc_news.mp3. If it already exists, this
 script exits immediately without re-downloading.

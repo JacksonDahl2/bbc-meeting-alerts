@@ -41,7 +41,7 @@ Requires `ffmpeg` for audio transcoding:
 
 ```bash
 brew install ffmpeg
-uv run python download_audio.py
+uv run python src/download_audio.py
 ```
 
 This downloads the BBC News countdown theme from YouTube and saves it to `assets/bbc_news.mp3`. Only needs to run once.
@@ -51,7 +51,7 @@ This downloads the BBC News countdown theme from YouTube and saves it to `assets
 ### 4. Run the app
 
 ```bash
-uv run python app.py
+uv run python src/app.py
 ```
 
 A `📻` icon appears in your menubar. Click **Grant Calendar Access** — macOS will show a standard permission dialog. After approving, your meetings for today will populate the menu.
@@ -123,7 +123,7 @@ All data stays on your machine:
 Make sure you're running on macOS and that `rumps` installed correctly: `uv run python -c "import rumps"`.
 
 **"Audio file missing" when testing**
-Run `uv run python download_audio.py` first.
+Run `uv run python src/download_audio.py` first.
 
 **Meetings don't show up**
 Click the menubar icon — if it says "Grant Calendar Access", click it to trigger the macOS permission dialog. If it already says "✅ Calendar access granted", make sure your Google account is added under System Settings → Internet Accounts and Calendars is enabled.

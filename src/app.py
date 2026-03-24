@@ -5,7 +5,7 @@ Plays the BBC News jingle 15 seconds before calendar meetings, then shows
 a live countdown in the menubar with red flashing as the meeting approaches.
 
 Run in development:
-    uv run python app.py
+    uv run python src/app.py
 
 Build as .app bundle:
     uv run python setup.py py2app        # full build
@@ -26,7 +26,7 @@ from Quartz import CGColorCreateSRGB
 
 _RED_CGCOLOR = CGColorCreateSRGB(1.0, 0.23, 0.19, 1.0)  # system red
 
-from calendar_client import CalendarClient
+from calendar_client import CalendarClient  # noqa: E402 (same dir when run via src/)
 from scheduler import Scheduler
 
 # ---------------------------------------------------------------------------
@@ -34,8 +34,12 @@ from scheduler import Scheduler
 # ---------------------------------------------------------------------------
 
 def _resource_path(filename: str) -> str:
-    resource_root = os.environ.get("RESOURCEPATH", os.path.dirname(__file__))
-    return os.path.join(resource_root, filename)
+    # In a bundled .app, RESOURCEPATH points to the bundle's Resources dir.
+    # In dev, app.py lives in src/ and assets live one level up at the project root.
+    if "RESOURCEPATH" in os.environ:
+        return os.path.join(os.environ["RESOURCEPATH"], filename)
+    src_dir = os.path.dirname(os.path.abspath(__file__))
+    return os.path.join(os.path.dirname(src_dir), filename)
 
 
 AUDIO_PATH = _resource_path("assets/bbc_news.mp3")
@@ -85,7 +89,14 @@ def _remove_launch_agent_plist() -> None:
 
 class BBCAlertApp(rumps.App):
     def __init__(self) -> None:
-        super().__init__("📻", quit_button=None)
+        icon_path = _resource_path("assets/icon.svg")
+        super().__init__(
+            "BBC Alert",
+            title=None,
+            icon=icon_path if os.path.exists(icon_path) else None,
+            template=True,
+            quit_button=None,
+        )
 
         self._client = CalendarClient()
         self._scheduler = Scheduler(self._client, AUDIO_PATH)
@@ -141,7 +152,7 @@ class BBCAlertApp(rumps.App):
         self.menu = items
 
     # ------------------------------------------------------------------
-    # Menubar title helpers
+    # Icon + menubar title helpers
     # ------------------------------------------------------------------
 
     def _set_menubar_title(self, text: str, red: bool = False) -> None:
@@ -153,7 +164,12 @@ class BBCAlertApp(rumps.App):
         layer.setCornerRadius_(4.0 if red else 0.0)
 
     def _reset_menubar_title(self) -> None:
-        self._set_menubar_title("📻")
+        # Setting title=None makes rumps show the icon instead of text
+        self.title = None
+        button = self._nsapp.nsstatusitem.button()
+        button.setWantsLayer_(True)
+        button.layer().setBackgroundColor_(None)
+        button.layer().setCornerRadius_(0.0)
 
     # ------------------------------------------------------------------
     # Timers
@@ -222,14 +238,14 @@ class BBCAlertApp(rumps.App):
                 self._flash_tick = 0
                 self._live_event = next_event
                 self._live_shown_at = now
-                self._set_menubar_title(f'"{name}" is live!')
+                self._set_menubar_title(f'<{name}> is live!')
             return
 
         # Active countdown: 0 < delta <= 15
         self._counting_down = True
         self._flash_tick += 1
         seconds = int(delta) + 1  # round up so we show "1s" not "0s"
-        text = f'"{name}" in {seconds}s'
+        text = f'<{name}> in {seconds}s'
 
         if seconds <= 5:
             # Flash background twice per second: toggle every 0.25s tick
